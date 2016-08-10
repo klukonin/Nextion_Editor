@@ -1,13 +1,7 @@
-#Download address is https://docs.google.com/uc?authuser=0&id=0B9RaaZBRecRYdFlfSzA4M0lpZUE&export=download
-
-
-
-
 #!/bin/bash
 # Date : (2015-12-09)
 # Distribution used to test : Ubuntu 14.04 64 bit
 # Author : Lukonin Kirill
-# Based on: Lightroom 5 script
 # Licence : GPLv3
 # PlayOnLinux: 4.2.9
  
@@ -15,21 +9,20 @@
 source "$PLAYONLINUX/lib/sources"
  
 PREFIX="Nextion"
-WINEVERSION="1.8-staging"
-TITLE="Nextion Editor 0.34"
+WINEVERSION="1.9.16-staging"
+TITLE="Nextion Editor 0.37"
 EDITOR="ITEAD Studio"
-PROG_URL="http://nextion.itead.cc/"
+ZIP_URL="http://dl.itead.cc/Nextion/nextion-setup-v037.zip"
 AUTHOR="Lukonin Kirill"
  
 #Initialization
 POL_SetupWindow_Init
-       
 POL_Debug_Init
  
 #Presentation
-POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$PROG_URL" "$AUTHOR" "$PREFIX"
+POL_SetupWindow_presentation "$TITLE" "$EDITOR" "$AUTHOR" "$PREFIX"
   
-POL_SetupWindow_message "$(eval_gettext 'IMPORTANT: This program may work not well on Linux. Be careful.')" "$TITLE"
+POL_SetupWindow_message "$(eval_gettext 'IMPORTANT: This program may work not well on Linux. Be careful. It is also need to run a sudo command once. Please follow the instructions')" "$TITLE"
  
 POL_Call POL_Function_RootCommand "echo 0|sudo tee /proc/sys/kernel/yama/ptrace_scope; exit"
  
@@ -38,20 +31,24 @@ POL_Wine_SelectPrefix "$PREFIX"
 POL_Wine_PrefixCreate "$WINEVERSION"
 Set_OS "win7"
  
-# Installation
+# Component_inslallation
 Set_OS "win7"
 POL_SetupWindow_message "$(eval_gettext 'Please install .NET framework. Please wait.')" "$TITLE"
 POL_Call POL_Install_dotnet45
 POL_SetupWindow_message "$(eval_gettext 'PLease install Internet Explorer 8. Click NEXT and ACCEPT during the installation process.')" "$TITLE"
 Set_OS "winxp"
 POL_Call POL_Install_ie8
-  
+
+
+#Saftware installation
+POL_System_TmpCreate "$PREFIX"
+cd "$POL_System_TmpDir"
+POL_Download $"ZIP_URL"
+unzip nextion-setup-v*.zip
+   
 # Create Shortcuts
-#POL_Shortcut "Nextion" "$TITLE"
-# No now, but may be later ITEAD will provide a ZIP package instead of current installation program
+POL_Shortcut "Nextion Editor.exe" "$TITLE"
        
 POL_SetupWindow_Close
 exit 0
  
-#FIXME
-#For this moment ITEAD Studio provides only .exe installation program. It is not possible to run it on Linux. So we need to unpack it before and run through the prefix
